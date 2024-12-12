@@ -22,28 +22,54 @@ const Home: FC = () => {
    file:border-0 file:bg-gray-100 file:px-4 file:py-2 file:text-sm file:font-semibold 
    file:text-blue-600 hover:file:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500`;
 
-  const onSubmit = (formValues: any) => {
+  const onSubmit = async (formValues: FormData) => {
+    //@ts-ignore
     if (formValues?.image_url) {
-      supabase.storage
-        .from("blog_image-storage")
-        .upload(formValues?.image_url?.name, formValues?.image_url)
-        .then((res) => {
-          const fullPath = res.data?.fullPath;
-          if (fullPath) {
+      try {
+        const { data, error: uploadError } = await supabase.storage
+          .from("blog_image-storage")
+          //@ts-ignore
+          .upload(formValues.image_url.name, formValues.image_url);
+
+        if (uploadError) {
+          alert(`Image upload failed: ${uploadError.message}`);
+          return;
+        }
+
+        const fullPath = data?.fullPath;
+
+        if (!fullPath) {
+          alert(
+            "Image upload successful, but path is undefined.  Check Supabase setup.",
+          );
+          return;
+        }
+
+        //@ts-ignore
+        const { data: insertedData, error: insertError } = await supabase
+          .from("blog-data")
+          //@ts-ignore
+          .insert({
+            title_ka: "",
             //@ts-ignore
-            return supabase.from("blog-data").insert({
-              title_ka: "",
-              title_en: formValues.title_en,
-              description_ka: "",
-              description_en: formValues.description_en,
-              user_id: Math.random(),
-              image_url: res.data?.fullPath,
-            });
-          }
-        })
-        .then(() => {
-          alert("blog added successfull")
-        });
+            title_en: formValues.title_en,
+            description_ka: "",
+            //@ts-ignore
+            description_en: formValues.description_en,
+            user_id: Math.random(),
+            image_url: fullPath,
+          });
+
+        if (insertError) {
+          alert(`Database insertion failed: ${insertError.message}`);
+          return;
+        }
+
+        alert("Blog added successfully!");
+      } catch (error: any) {
+        alert(`An error occurred: ${error.message}`);
+        console.error("General error:", error);
+      }
     }
   };
 
@@ -54,10 +80,9 @@ const Home: FC = () => {
       .throwOnError()
       .then((res) => {
         //@ts-ignore
-        setBlogs(res.data)
+        setBlogs(res.data);
       });
-  }, [blogs]);
-
+  }, []);
 
   return (
     <section className="mt-[30px]">
@@ -125,10 +150,10 @@ const Home: FC = () => {
             </div>
           </div>
           {[...blogs]?.reverse().map((data) => {
-            return(
+            return (
               //@ts-ignore
-              <Blog key={data.user_id} data={data}/>
-            )
+              <Blog key={data.user_id} data={data} />
+            );
           })}
         </div>
         <PopularFeatures />
