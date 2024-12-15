@@ -39,7 +39,7 @@ function App() {
     })
 
     return () => subscription.unsubscribe()
-  }, [handleStoreUser])
+  }, [])
 
 
   return (

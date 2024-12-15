@@ -1,9 +1,13 @@
-import * as React from "react"
+import * as React from "react";
+import { cn } from "@/lib/utils";
 
-import { cn } from "@/lib/utils"
+interface InputProps extends React.ComponentProps<"input"> {
+  value?: string;
+  onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void; 
+}
 
-const Input = React.forwardRef<HTMLInputElement, React.ComponentProps<"input">>(
-  ({ className, type, ...props }, ref) => {
+const Input = React.forwardRef<HTMLInputElement, InputProps>(
+  ({ className, type = "text", value, onChange, ...props }, ref) => {
     return (
       <input
         type={type}
@@ -12,11 +16,13 @@ const Input = React.forwardRef<HTMLInputElement, React.ComponentProps<"input">>(
           className
         )}
         ref={ref}
+        value={value}
+        onChange={onChange}
         {...props}
       />
-    )
+    );
   }
-)
-Input.displayName = "Input"
+);
+Input.displayName = "Input";
 
-export { Input }
+export { Input };
