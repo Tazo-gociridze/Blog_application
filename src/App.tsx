@@ -41,7 +41,6 @@ function App() {
     return () => subscription.unsubscribe()
   }, [])
 
-
   return (
     <main>
       <BrowserRouter>

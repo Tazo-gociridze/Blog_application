@@ -3,10 +3,11 @@ import FixedWidthWrapper from "../../utils/Fixed-width-wrapper/FixedWidthWrapper
 import PopularFeatures from "./views/PopularFeatures/PopularFeatures";
 import BlogAddForm from "./components/blog-add-form/BlogAddForm";
 import BlogSearchForm from "./components/blog-search-form/BlogSearchForm";
-import { supabase } from "@/supabase";
 import Blog from "./views/Blog/Blog";
 import qs from "qs";
 import { useSearchParams } from "react-router-dom";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { getBlogsData } from "@/api/add-blog";
 
 export interface Blog {
   title_en: number;
@@ -21,20 +22,17 @@ export interface Blog {
 const Home: FC = () => {
   const [blogs, setBlogs] = useState<Blog[]>([]);
   const [searchParams, setSearchParams] = useSearchParams()
+  //@ts-ignore
+  const {refetch} = useQuery({queryKey: ['getBlogs'], queryFn: getBlogsData})
+  const {mutate} = useMutation({mutationKey: ['mutateBlogs'], mutationFn: getBlogsData})
+
 
   useEffect(() => {
-
     const parsedSearchParam = qs.parse(searchParams.toString())
     const searchText = parsedSearchParam?.searchText
-
-    supabase
-      .from("blog-data")
-      .select("*")
-      .ilike("title_en" ,`%${searchText}%`)
-      .throwOnError()
-      .then((res: any) => {
-        setBlogs(res.data);
-      });
+    refetch()
+    //@ts-ignore
+    mutate({searchText, setBlogs})
   }, []);
 
 
@@ -43,7 +41,7 @@ const Home: FC = () => {
       <FixedWidthWrapper className="grid grid-cols-[2fr_1fr] gap-[30px]">
         <div className="*:mb-[30px] *:rounded-xl *:border-[1px] *:border-[#b4a9a952] *:shadow-md">
           <BlogAddForm />
-          <BlogSearchForm setBlogs={setBlogs} searchParams={searchParams} setSearchParams={setSearchParams}/>
+          <BlogSearchForm refetchBlogs={refetch} setBlogs={setBlogs} searchParams={searchParams} setSearchParams={setSearchParams}/>
           {[...blogs]?.reverse().map((data, index) => {
             return (
               //@ts-ignore
