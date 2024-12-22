@@ -1,7 +1,7 @@
+import { BlogDataTypes } from "@/pages/Home/Home.data.types";
 import { FC } from "react";
 
-//@ts-ignore
-const BlogImage: FC = ({ data }) => {
+const BlogImage: FC<{data: BlogDataTypes}> = ({ data }) => {
   return (
     <img
       src={`https://kbotxhglayhpdmbmvkjr.supabase.co/storage/v1/object/public/${data.image_url}`}

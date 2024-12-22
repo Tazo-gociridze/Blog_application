@@ -10,36 +10,34 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import About from "./pages/About/About";
 import AuthorPage from "./pages/Author/Author-page";
 import LoginError from "./pages/login-error/LoginError";
-import { useEffect } from "react";
-import { supabase } from "./supabase";
-import { useAuthContext } from "./contextApi/auth/hook/useAuthContext";
 import AuthGuard, { AuthGuardWhileSignOut } from "./components/route-guard/auth";
 import Profile from "./pages/Profile/Profile";
+import { BlogProvider } from "./contextApi/auth";
+import { useAuthContext } from "./contextApi/auth/hook/useAuthContext";
+import { useEffect } from "react";
+import { supabase } from "./supabase";
+
 
 const queryClient = new QueryClient();
 function App() {
-
   const { handleStoreUser } = useAuthContext()
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
-      handleStoreUser(session)
-    })
+       if (session) {
+           handleStoreUser(session);
+       }
+   });
+   const {
+     data: { subscription },
+   } = supabase.auth.onAuthStateChange((_event, session) => {
+       if (session) {
+         handleStoreUser(session)
+       }
+   });
 
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      if(!session){
-        supabase.auth.signInWithPassword({
-          email: "tazogociridze9@gmail.com",
-          password: "tamazi104",
-        })
-      }
-      handleStoreUser(session)
-    })
-
-    return () => subscription.unsubscribe()
-  }, [])
+   return () => subscription.unsubscribe();
+ }, []);
 
   return (
     <main>
@@ -48,7 +46,7 @@ function App() {
         <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
           <Routes>
             <Route path="/" element={<Layout />}>
-              <Route index element={<Home />}></Route>
+              <Route index element={<BlogProvider><Home /></BlogProvider>}></Route>
               <Route path="/about" element={<About />}></Route>
               <Route path="/author" element={<AuthorPage />}></Route>
               <Route path="/profile" element={<AuthGuardWhileSignOut><Profile /></AuthGuardWhileSignOut>}></Route>
@@ -63,5 +61,4 @@ function App() {
     </main>
   );
 }
-
 export default App;

@@ -1,4 +1,5 @@
 import { supabase } from "@/supabase";
+import { v4 as uuidv4 } from "uuid";
 
 interface Blog {
   title_en: number;
@@ -8,16 +9,21 @@ interface Blog {
   user_id: string | null;
   image_url: string | null;
   created_at: string;
+  blog_id: string;
 }
 
-export const addBlogRequest = async ({formValues, user} : {formValues: any, user: any}) => {
+export const addBlogRequest = async ({
+  formValues,
+  user,
+}: {
+  formValues: any;
+  user: any;
+}) => {
   if (formValues?.image_url) {
     try {
       const { data, error: uploadError } = await supabase.storage
         .from("blog_image-storage")
-        //@ts-ignore
         .upload(formValues.image_url.name, formValues.image_url);
-
       if (uploadError) {
         alert(`Image upload failed: ${uploadError.message}`);
         return;
@@ -31,19 +37,15 @@ export const addBlogRequest = async ({formValues, user} : {formValues: any, user
         );
         return;
       }
-
-      //@ts-ignore
-      const { data: insertedData, error: insertError } = await supabase
+      const { error: insertError } = await supabase
         .from("blog-data")
-        //@ts-ignore
         .insert({
           title_ka: "",
-          //@ts-ignore
           title_en: formValues.title_en,
           description_ka: "",
-          //@ts-ignore
           description_en: formValues.description_en,
           user_id: user.user.id,
+          blog_id: uuidv4(),
           image_url: fullPath,
         });
 
@@ -60,39 +62,37 @@ export const addBlogRequest = async ({formValues, user} : {formValues: any, user
   }
 };
 
-
-
 export const getBlogsData = async ({
-  searchText,
-  setBlogs
+  watchedSearchField,
 }: {
-    searchText: string ;
-    setBlogs?: (blogs: Blog[]) => void
-}): Promise<void> => {
+  watchedSearchField:
+    | string
+    | qs.ParsedQs
+    | string[]
+    | qs.ParsedQs[]
+    | undefined;
+}): Promise<Blog[]> => {
 
-    if (!searchText) {
+  if (typeof watchedSearchField === 'string' && watchedSearchField.length > 1) {
+    const { data, error } = await supabase
+      .from("blog-data")
+      .select("*")
+      .ilike("title_en", `%${watchedSearchField}%`)
+      .throwOnError();
+    if (error) {
+      console.error("Error fetching blogs with search text:", error);
+      return [];
+    }
+    return data as Blog[];
+  } else {
     const { data, error } = await supabase
       .from("blog-data")
       .select("*")
       .throwOnError();
-
     if (error) {
-      console.error("Error fetching all blogs", error);
-        throw error
+      console.error("Error fetching all blogs:", error);
+      return [];
     }
-    setBlogs?.(data as Blog[]);
-    return
+    return data as Blog[];
   }
-
-    const { data, error } = await supabase
-      .from("blog-data")
-      .select("*")
-      .ilike("title_en", `%${searchText}%`)
-      .throwOnError();
-
-    if (error) {
-        console.error("Error fetching filtered blogs", error);
-        throw error
-    }
-   setBlogs?.(data as Blog[]);
 };

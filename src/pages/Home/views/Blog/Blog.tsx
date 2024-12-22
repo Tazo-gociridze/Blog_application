@@ -2,14 +2,13 @@ import { FC } from "react";
 import BlogImage from "../../components/Blog/BlogImage/BlogImage";
 import BlogText from "../../components/Blog/BlogText/BlogText";
 import BlogTags from "../../components/Blog/BlogTags/BlogTags";
-import { BlogDataInterface } from "../../../../data/Home/BlogData";
+import { BlogDataTypes } from "../../Home.data.types";
 
-const Blog: FC<{data: BlogDataInterface}> = ({data}) => {
+
+const Blog: FC<{data: BlogDataTypes}> = ({data}) => {
   return (
       <div className="h-500px p-[25px] cursor-pointer">
-        {/* @ts-ignore */}
         <BlogImage data={data}/>
-        {/* @ts-ignore */}
         <BlogText data={data}/>
         <BlogTags/>
       </div>

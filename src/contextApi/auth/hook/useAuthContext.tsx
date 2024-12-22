@@ -1,5 +1,5 @@
 import { useContext } from "react"
-import { AuthContext } from ".."
+import { AuthContext, BlogContext } from ".."
 
 
 export const useAuthContext = () => {
@@ -10,4 +10,14 @@ export const useAuthContext = () => {
      }
 
     return authContext
+}
+
+export const useBlogContext = () => {
+    const blogContext = useContext(BlogContext)
+
+     if(!blogContext){
+        throw new Error("context error, use context provider!!!")
+     }
+
+    return blogContext
 }

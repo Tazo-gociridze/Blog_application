@@ -28,13 +28,16 @@ export const useProfileLogic = () => {
     phone_number: "",
     avatar_url: "",
   });
-  const { user } = useAuthContext();
+  const { user, handleStoreUser } = useAuthContext();
 
   const { full_name_en, full_name_ka, phone_number, avatar_url } = profileData;
 
   const { mutate: handleLogout, reset } = useMutation({
     mutationKey: ["logout"],
     mutationFn: logout,
+    onSuccess: () => {
+      handleStoreUser(null)
+    }
   });
 
   const { mutate: handleFillProfileData } = useMutation({
