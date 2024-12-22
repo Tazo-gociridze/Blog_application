@@ -24,9 +24,9 @@ const Home: FC = () => {
             searchParams={searchParams}
             setSearchParams={setSearchParams}
           />
-          {data?.map((data, index) => {
+          {data ? [...data].reverse().map((data, index) => {
             return <Blog key={index} data={data as BlogDataTypes} />;
-          })}
+          }): null}
         </div>
         <PopularFeatures />
       </FixedWidthWrapper>
