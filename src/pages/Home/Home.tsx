@@ -7,7 +7,6 @@ import Blog from "./views/Blog/Blog";
 import { BlogDataTypes } from "./Home.data.types";
 import useHomeLogic from "./hook/useHomeLogic";
 
-
 const Home: FC = () => {
   const {
     setSearchParams,

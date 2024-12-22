@@ -4,10 +4,7 @@ import { Input } from "@/components/ui/input";
 import { fileInputStyles } from "./BlogAddForm.data.types";
 import useBlogAddFormLogic from "./hook/useBlogAddFormLogic";
 
-
-
 const BlogAddForm = () => {
-
   const {
     handleSubmit,
     control,

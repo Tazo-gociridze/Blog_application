@@ -4,8 +4,8 @@ import { FC } from "react";
 const BlogImage: FC<{data: BlogDataTypes}> = ({ data }) => {
   return (
     <img
-      src={`https://kbotxhglayhpdmbmvkjr.supabase.co/storage/v1/object/public/${data.image_url}`}
-      className="blog-image h-[200px] w-[100%] rounded-md"
+      src={`${import.meta.env.VITE_SUPABASE_IMAGE_STORAGE_URL}${data.image_url}`}
+      className="blog-image h-[500px] w-[100%] rounded-md"
     />
   );
 };
