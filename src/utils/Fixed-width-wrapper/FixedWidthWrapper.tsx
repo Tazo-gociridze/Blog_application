@@ -1,15 +1,14 @@
-import { FC, PropsWithChildren } from "react";
+import { FC, PropsWithChildren } from 'react'
 
 interface FixedWidthWrapperPropsInterface {
-    className: string,
+  className: string
 }
 
-const FixedWidthWrapper: FC<PropsWithChildren<FixedWidthWrapperPropsInterface>> = ({children, className}) => {
-  return (
-    <div className={`w-[1550px] m-auto ${className}`}>
-          {children}
-    </div>
-  )
-};
+const FixedWidthWrapper: FC<PropsWithChildren<FixedWidthWrapperPropsInterface>> = ({
+  children,
+  className,
+}) => {
+  return <div className={`m-auto w-[1550px] ${className}`}>{children}</div>
+}
 
-export default FixedWidthWrapper;
+export default FixedWidthWrapper

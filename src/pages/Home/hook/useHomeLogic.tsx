@@ -1,23 +1,18 @@
-import { useSearchParams } from "react-router-dom";
-import qs from "qs";
-import { useQuery } from "@tanstack/react-query";
-import { getBlogsData } from "@/api/add-blog";
+import { useSearchParams } from 'react-router-dom'
+import qs from 'qs'
+import { useGetBlogsListQuery } from '@/react-query/queries/blogs'
 
 const useHomeLogic = () => {
-  const [searchParams, setSearchParams] = useSearchParams();
-  const parsedQueryParams = qs.parse(searchParams.toString());
+  const [searchParams, setSearchParams] = useSearchParams()
+  const parsedQueryParams = qs.parse(searchParams.toString())
+  const searchText = parsedQueryParams.searchText
+  const { data } = useGetBlogsListQuery({ searchText })
 
-  const { data } = useQuery({
-    queryKey: ["getBlogs", parsedQueryParams.searchText],
-    queryFn: () =>
-      getBlogsData({ watchedSearchField: parsedQueryParams.searchText }),
-  });
-
-  return{
+  return {
     setSearchParams,
     data,
     searchParams,
   }
-};
+}
 
-export default useHomeLogic;
+export default useHomeLogic

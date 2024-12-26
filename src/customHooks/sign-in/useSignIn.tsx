@@ -1,47 +1,46 @@
-import { formSchema, onSubmit } from "@/pages/SignIn/data/formSchema";
-import { login } from "@/supabase/auth";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation } from "@tanstack/react-query";
-import { useState } from "react";
-import { useForm } from "react-hook-form";
-import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router-dom";
+import { formSchema, onSubmit } from '@/pages/SignIn/data/formSchema'
+import { useSignInMutation } from '@/react-query/mutations/signin'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useState } from 'react'
+import { useForm } from 'react-hook-form'
+import { useTranslation } from 'react-i18next'
+import { useNavigate } from 'react-router-dom'
 
 const useSignIn = () => {
-const navigate = useNavigate()
-const { t } = useTranslation();
+  const navigate = useNavigate()
+  const { t } = useTranslation()
   const [loginPayload, setLoginPayload] = useState({
-    email: "",
-    password: "",
-  });
+    email: '',
+    password: '',
+  })
 
-  const { mutate } = useMutation({
-    mutationKey: ["login"],
-    mutationFn: login,
-    onSuccess: (res) => {
-      if(res.error?.code === 'invalid_credentials'){
+  const { mutate } = useSignInMutation({
+    mutationOptions: {
+      onSuccess: (res) => {
+        if (res.error?.code === 'invalid_credentials') {
           navigate('/loginerror')
-      } else {
-        navigate('/')
-      }
+        } else {
+          navigate('/')
+        }
+      },
     },
-  });
+  })
 
   const handleSubmitLogin = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+    e.preventDefault()
     if (!!loginPayload.email && !!loginPayload.password) {
-      mutate(loginPayload);
+      mutate(loginPayload)
     }
-    form.handleSubmit(onSubmit);
-};
+    form.handleSubmit(onSubmit)
+  }
 
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      email: "",
-      password: "",
+      email: '',
+      password: '',
     },
-  });
+  })
   return {
     t,
     loginPayload,
@@ -50,6 +49,6 @@ const { t } = useTranslation();
     handleSubmitLogin,
     form,
   }
-};
+}
 
-export default useSignIn;
+export default useSignIn

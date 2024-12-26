@@ -1,111 +1,99 @@
-import { useForm, FormProvider } from "react-hook-form";
-import { Button } from "@/components/ui/button";
-import {
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { Input } from "../../components/ui/input";
-import { defaultStyles } from "@/data/defaultStyles/DefaultStyles";
-import { Link } from "react-router-dom";
-import useSignInLogic from "./hook/useSignInLogic";
+import { useForm, FormProvider } from 'react-hook-form'
+import { Button } from '@/components/ui/button'
+import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
+import { Input } from '../../components/ui/input'
+import { defaultStyles } from '@/data/defaultStyles/DefaultStyles'
+import { Link } from 'react-router-dom'
+import useSignInLogic from './hook/useSignInLogic'
 
 export default function SignIn() {
+  const { t, register, handleSubmit, errors, error, onSubmit } = useSignInLogic()
 
-  const { t, register, handleSubmit, errors, error, onSubmit } = useSignInLogic();
-  
   return (
-    <section className="flex h-[100vh] items-center justify-center">
+    <section className='flex h-[100vh] items-center justify-center'>
       <FormProvider {...useForm()}>
         <form
           onSubmit={handleSubmit(onSubmit)}
-          className="w-[500px] space-y-8 rounded-xl border-[1px] border-[#5f5a5a2c] p-[40px] shadow-xl"
+          className='w-[500px] space-y-8 rounded-xl border-[1px] border-[#5f5a5a2c] p-[40px] shadow-xl'
         >
-          <div className="text-center">
-            <h1 className="text-[25px] font-[700]">Sign in</h1>
-            <p className="text-[14px] text-[#7c7878]">Login to your account</p>
+          <div className='text-center'>
+            <h1 className='text-[25px] font-[700]'>Sign in</h1>
+            <p className='text-[14px] text-[#7c7878]'>Login to your account</p>
           </div>
 
           <FormField
-            name="email"
+            name='email'
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Email</FormLabel>
                 <FormControl>
                   <Input
-                    type="email"
-                    placeholder="Email"
+                    type='email'
+                    placeholder='Email'
                     {...field}
-                    {...register("email", {
-                      required: t("email-required"),
+                    {...register('email', {
+                      required: t('email-required'),
                       pattern: {
-                        value:
-                          /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/,
-                        message: t("email-pattern-message"),
+                        value: /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/,
+                        message: t('email-pattern-message'),
                       },
                       minLength: {
                         value: 15,
-                        message: t("email-min-length-message"),
+                        message: t('email-min-length-message'),
                       },
                       maxLength: {
                         value: 100,
-                        message: t("email-max-length-message"),
+                        message: t('email-max-length-message'),
                       },
                     })}
                   />
                 </FormControl>
-                {errors.email && (
-                  <FormMessage>{errors.email.message as string}</FormMessage>
-                )}
+                {errors.email && <FormMessage>{errors.email.message as string}</FormMessage>}
               </FormItem>
             )}
           />
 
           <FormField
-            name="password"
+            name='password'
             render={({ field }) => (
               <FormItem>
                 <FormLabel>password</FormLabel>
                 <FormControl>
                   <Input
-                    type="password"
-                    placeholder="Password"
+                    type='password'
+                    placeholder='Password'
                     {...field}
-                    {...register("password", {
-                      required: t("password-required"),
+                    {...register('password', {
+                      required: t('password-required'),
                       minLength: {
                         value: 8,
-                        message: t("password-min-length-message"),
+                        message: t('password-min-length-message'),
                       },
                       maxLength: {
                         value: 25,
-                        message: t("password-max-length-message"),
+                        message: t('password-max-length-message'),
                       },
                     })}
                   />
                 </FormControl>
-                {errors.password && (
-                  <FormMessage>{errors.password.message as string}</FormMessage>
-                )}
+                {errors.password && <FormMessage>{errors.password.message as string}</FormMessage>}
               </FormItem>
             )}
           />
 
-          {error && <p className="text-red-500">{error}</p>}
-          <Button type="submit" className={`w-[100%] ${defaultStyles.button}`}>
+          {error && <p className='text-red-500'>{error}</p>}
+          <Button type='submit' className={`w-[100%] ${defaultStyles.button}`}>
             Submit
           </Button>
 
-          <div className="flex justify-between">
+          <div className='flex justify-between'>
             <span>dont have an account?</span>
-            <Link className="text-[blue]" to="/signup">
+            <Link className='text-[blue]' to='/auth/signup'>
               Sign up
             </Link>
           </div>
         </form>
       </FormProvider>
     </section>
-  );
+  )
 }
